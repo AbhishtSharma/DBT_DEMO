@@ -5,21 +5,10 @@ WITH CTE as
     HOUR(TO_TIMESTAMP(STARTED_AT)),
     DAYOFWEEK(TO_TIMESTAMP(STARTED_AT)),
     DAYNAME(TO_TIMESTAMP(STARTED_AT)),
-    case 
-    when DAYNAME(TO_TIMESTAMP(STARTED_AT)) in ('Sun','Sat')
-    then 'Weekend'
-    else 'Business Day'
-    END as Day_Type,
+    
+    {{ day_type('STARTED_AT') }} as Day_Type,
 
-    case
-    when month(TO_TIMESTAMP(STARTED_AT)) in (12,1,2)
-    then 'Winter'
-    when month(TO_TIMESTAMP(STARTED_AT)) in (3,4,5)
-    then 'Spring'
-    when month(TO_TIMESTAMP(STARTED_AT)) in (6,7,8)
-    then 'Summer'
-    else 'Autum'
-    END as Season
+    {{ seasons('STARTED_AT')}} as season
 
     from {{ source('demo', 'bike') }}
     where STARTED_AT != 'started_at'
